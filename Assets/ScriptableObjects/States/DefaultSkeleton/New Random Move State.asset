@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce39f9647b6cd8f4cbea93bf309fec8e, type: 3}
+  m_Name: New Random Move State
+  m_EditorClassIdentifier: 
+  Character: {fileID: 0}
+  MaxDistance: 10
+  MinDistance: 1
+  completeDistance: 0.49
+  completeTimer: 10
+  aroundTarget: 1
+  tempCompleteTimer: 0
