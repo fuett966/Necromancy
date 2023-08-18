@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cinemachine;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -6,6 +7,7 @@ using UnityEngine.AI;
 public class Character : MonoBehaviour
 {
     [Header("Automatic flags")]
+
 
     [SerializeField] private bool _autoChasePlayer;
     public bool _AutoChasePlayer
@@ -95,6 +97,11 @@ public class Character : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
         characterManager = GetComponent<CharacterManager>();
+
+        if(_isPatrolingPoint)
+        {
+            randomMoveTarget = transform;
+        }
         // target = transform;
     }
 

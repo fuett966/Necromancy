@@ -39,9 +39,12 @@ public class CharacterManager : MonoBehaviour, IDamagable
     {
         character = GetComponent<Character>();
         damageScript = GetComponentInChildren<DamageScript>();
-        damageScript.enemyTags = enemyTags;
         animator = GetComponent<Animator>();
         characterInfo = GetComponent<CharacterInfo>();
+
+        damageScript.enemyTags = enemyTags;
+        
+        
     }
     void Start()
     {
@@ -52,23 +55,21 @@ public class CharacterManager : MonoBehaviour, IDamagable
 
     private void CheckCharacterLiveState()
     {
-        if (characterInfo.CurrentLifeState == null)
+        if (characterInfo.CurrentState == null || characterInfo.CurrentState == "")
         {
-            characterInfo.CurrentLifeState = "Corpse";
+            characterInfo.CurrentState = "Corpse";
             _isDead = true;
             tempHealth = 0f;
             return;
         }
-        if (characterInfo.CurrentLifeState == "Corpse")
+        if (characterInfo.CurrentState == "Corpse")
         {
             _isDead = true;
             tempHealth = 0f;
             return;
         }
-        characterInfo.CurrentLifeState = "";
+
         tempHealth = initialHealth;
-        
-        
     }
 
     void Update()
