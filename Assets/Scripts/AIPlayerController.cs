@@ -44,7 +44,6 @@ public class AIPlayerController : MonoBehaviour
             foreach (Character character in testCharacterList)
             {
                 character.ChangeTarget(tempPoint.transform);
-
             }
 
             Debug.DrawLine(transform.position, hit.point, Color.red, 5f);

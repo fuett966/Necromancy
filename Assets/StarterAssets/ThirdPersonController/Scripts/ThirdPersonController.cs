@@ -411,7 +411,9 @@ namespace StarterAssets
             {
                 if (!_mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.activeSelf)
                 {
+                     
                     EnableOptionsMenu();
+
                 }
                 else
                 {
@@ -445,11 +447,16 @@ namespace StarterAssets
         }
         private void EnableOptionsMenu()
         {
-            Cursor.visible = true;
+
             Cursor.lockState = CursorLockMode.None;
-            _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(true);
+            Cursor.visible = true;
+
             GetComponent<StarterAssetsInputs>().cursorLocked = false;
             GetComponent<StarterAssetsInputs>().cursorInputForLook = false;
+
+            _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(true);
+            
+            
         }
         private void DisableOptionsMenu()
         {

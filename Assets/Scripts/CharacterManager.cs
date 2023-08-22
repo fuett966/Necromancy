@@ -49,7 +49,6 @@ public class CharacterManager : MonoBehaviour, IDamagable
     void Start()
     {
         CheckCharacterLiveState();
-
         ChangeDamage();
     }
 
