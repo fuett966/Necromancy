@@ -15,4 +15,4 @@ MonoBehaviour:
   Character: {fileID: 0}
   target: {fileID: 0}
   distance: 4
-  maxDistance: 15
+  maxDistance: 100
