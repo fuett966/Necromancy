@@ -28,25 +28,25 @@ public class AIPlayerController : MonoBehaviour
         }
     }
 
-    //public void ChangeTarget()
-    //{
-    //    //ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //    ray = Camera.main.ScreenPointToRay(Camera.main.ViewportToScreenPoint(new Vector3(.5f, .5f, 0)));
-    //
-    //    if (Physics.Raycast(ray, out hit, 100f))
-    //    {
-    //        if (tempPoint != null)
-    //        {
-    //            Destroy(tempPoint);
-    //        }
-    //        tempPoint = Instantiate(PointPrefab, hit.point, Quaternion.identity);
-    //
-    //        foreach (Character character in testCharacterList)
-    //        {
-    //            character.ChangeTarget(tempPoint.transform);
-    //        }
-    //
-    //        Debug.DrawLine(transform.position, hit.point, Color.red, 5f);
-    //    }
-    //}
+    public void ChangeTarget()
+    {
+        ray = Camera.main.ScreenPointToRay(Camera.main.ViewportToScreenPoint(new Vector3(.5f, .5f, 0)));
+    
+        if (Physics.Raycast(ray, out hit, 100f))
+        {
+            if (tempPoint != null)
+            {
+                Destroy(tempPoint);
+            }
+            tempPoint = Instantiate(PointPrefab, hit.point, Quaternion.identity);
+    
+            foreach (Character character in testCharacterList)
+            {
+                character.ChangePosition(tempPoint.transform);
+                Debug.Log("Penis");
+            }
+    
+            Debug.DrawLine(transform.position, hit.point, Color.red, 5f);
+        }
+    }
 }

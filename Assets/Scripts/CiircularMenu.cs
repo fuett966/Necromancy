@@ -33,7 +33,7 @@ public class CiircularMenu : MonoBehaviour
     }
     void Start()
     {
-        menuCanvas.gameObject.active = false;
+        menuCanvas.gameObject.SetActive(false);
         menuItems = buttons.Count;
         foreach (MenuButton button in buttons)
         {

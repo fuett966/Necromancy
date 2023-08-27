@@ -106,8 +106,11 @@ public class Character : MonoBehaviour
             return;
         }
 
-        if (SearchEnemyInSphere())
+        if ((SearchEnemyInSphere() && attackState.TargetLookAt != null) || SearchEnemyInCone())
         {
+            Debug.Log("isATTACK");
+
+
             SearchClosetTarget();
 
             SetState(AttackState);
@@ -135,7 +138,7 @@ public class Character : MonoBehaviour
 
 
 
-    public bool SearchEnemyInSphere()
+    public bool SearchEnemyInCone()
     {
         if (enemyColliders.Count != 0)
         {
@@ -180,7 +183,7 @@ public class Character : MonoBehaviour
 
     }
 
-    public bool HandleDetection()
+    public bool SearchEnemyInSphere()
     {
         if (enemyColliders.Count != 0)
         {
@@ -202,7 +205,6 @@ public class Character : MonoBehaviour
         }
 
         allColliders.Clear();
-        SearchClosetTarget();
 
         if (enemyColliders.Count == 0)
         {
@@ -210,8 +212,6 @@ public class Character : MonoBehaviour
         }
         else
         {
-            CurrentState.Exit();
-            SetState(AttackState);
             return true;
         }
     }
@@ -232,6 +232,27 @@ public class Character : MonoBehaviour
                 }
             }
         }
-        target = closestTarget.transform;
+        if (closestTarget != null)
+        {
+            target = closestTarget.transform;
+        }
+
+    }
+    public void SetAttackState()
+    {
+
+        CurrentState.Exit();
+        SetState(AttackState);
+    }
+
+    public void ChangePosition(Transform newPosition)
+    {
+        if (CurrentState != AttackState && characterManager._IsAlive)
+        {
+            target = newPosition;
+            CurrentState.Exit();
+            SetState(chaseState);
+            return;
+        }
     }
 }

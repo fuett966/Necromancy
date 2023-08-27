@@ -40,7 +40,7 @@ public class RandomMoveState : State
             IsFinished = true;
             return;
         }
-        if (Character.SearchEnemyInSphere())
+        if (Character.SearchEnemyInCone())
         {
             IsFinished = true;
             return;

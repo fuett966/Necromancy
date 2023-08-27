@@ -23,14 +23,14 @@ public class ChaseState : State
             return;
         }
 
-        if (!Character.CharacterManager._IsAlive || Character.SearchEnemyInSphere())
+        if (!Character.CharacterManager._IsAlive || Character.SearchEnemyInCone())
         {
             IsFinished = true;
             return;
         }
 
 
-        if ((Character.transform.position - target.position).magnitude >= MaxDistance)
+        if ((Character.transform.position - target.position).magnitude >= distance)
         {
             Character.MoveTo(target.position);
         }

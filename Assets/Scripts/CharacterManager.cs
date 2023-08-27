@@ -15,7 +15,7 @@ public class CharacterManager : EntityManager, IDamagable
 
 
 
-    [SerializeField] private bool _isAlive;
+    [SerializeField] private bool _isAlive = true;
     public bool _IsAlive => _isAlive;
 
     [SerializeField] private float tempHealth;
@@ -33,8 +33,12 @@ public class CharacterManager : EntityManager, IDamagable
 
     #endregion Components
 
-    [SerializeField] private AudioClip _wasDamaged;
+    [SerializeField] private AudioClip _wasDamagedAC;
     [SerializeField] private AudioClip _walking;
+    private bool _wasDamaged;
+    public float WasDamagedTimeout = 0.3f;
+    [SerializeField] private float _temporaryWasDamagedTimeout;
+
 
     #endregion Variables
 
@@ -46,12 +50,15 @@ public class CharacterManager : EntityManager, IDamagable
         characterInfo = GetComponent<CharacterInfo>();
 
         damageScript.enemyTags = enemyTags;
-
+        tempHealth = initialHealth;
+        _isAlive = true;
+        _temporaryWasDamagedTimeout = 0f;
 
     }
     void Start()
     {
-        CheckCharacterLiveState();
+        //CheckCharacterLiveState();
+
         ChangeDamage();
     }
 
@@ -80,14 +87,27 @@ public class CharacterManager : EntityManager, IDamagable
 
     void Update()
     {
-        if (animator.GetBool("IsWalking") && !GetComponent<AudioSource>().isPlaying)
-        {
-            GetComponent<AudioSource>().PlayOneShot(_walking);
-        }
-        else
-        {
+        //if (animator.GetBool("IsWalking") && !GetComponent<AudioSource>().isPlaying)
+        //{
+        //    GetComponent<AudioSource>().PlayOneShot(_walking);
+        //}
+        //else
+        //{
+        //
+        //}
 
-        }
+        //if (_temporaryWasDamagedTimeout <= 0 && _wasDamaged)
+        //{
+        //    _temporaryWasDamagedTimeout = WasDamagedTimeout;
+        //    animator.SetBool("IsDamaged", true);
+        //    
+        //}
+        //else
+        //{
+        //    _temporaryWasDamagedTimeout -= Time.deltaTime;
+        //    animator.SetBool("IsDamaged", false);
+        //}
+
         CheckHealth();
     }
 
@@ -108,21 +128,36 @@ public class CharacterManager : EntityManager, IDamagable
     public void TakeDamage(float damageAmount)
     {
         tempHealth -= damageAmount;
-        character.HandleDetection();
+        //ищем нападающего на юнита
+        if (character.SearchEnemyInSphere())
+        {
+            character.SearchClosetTarget();
+            character.SetAttackState();
+        }
 
-        if ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animator.GetCurrentAnimatorStateInfo(0).IsName("Damaged")) ||
-            animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01") ||
-            animator.GetCurrentAnimatorStateInfo(0).IsName("Death01") ||
-            !animator.GetBool("IsDead"))
+        if (_temporaryWasDamagedTimeout <= 0)
         {
-            animator.SetBool("IsDamaged", false);
-            Debug.Log("Лох");
+            _wasDamaged = true;
         }
-        else
-        {
-animator.SetBool("IsDamaged", true);
-        }
-        GetComponent<AudioSource>().PlayOneShot(_wasDamaged);
+        
+
+        //if ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9f && animator.GetCurrentAnimatorStateInfo(0).IsName("Damaged")) ||
+        //    //animator.GetBool("IsAttack") ||
+        //    //animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01") ||
+        //    (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.2f && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.8f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01")) ||
+        //    animator.GetCurrentAnimatorStateInfo(0).IsName("Death01") ||
+        //    animator.GetBool("IsDead"))
+        //{
+        //    animator.SetBool("IsDamaged", false);
+        //}
+        //else
+        //{
+        //    Debug.Log("ISDAMAGED");
+        //    animator.SetBool("IsDamaged", true);
+        //}
+
+
+        GetComponent<AudioSource>().PlayOneShot(_wasDamagedAC, 0.2f);
     }
     public void CorpseNecromancy()
     {

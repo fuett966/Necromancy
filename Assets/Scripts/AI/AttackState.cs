@@ -17,11 +17,13 @@ public class AttackState : State
 
     [SerializeField] private Vector3 _targetLookAt;
     public Vector3 TargetLookAt => _targetLookAt;
+
+
     public override void Init()
     {
         target = Character.Target;
-        
 
+        _targetLookAt = target.position;
         animator = Character.Animator;
     }
 
@@ -36,22 +38,30 @@ public class AttackState : State
             IsFinished = true;
             return;
         }
+        //поиск ближайшего врага, если анимация атаки закончилась
         if (!(animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.9f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01")))
         {
             Character.SearchClosetTarget();
             target = Character.Target;
         }
+        //если анимация НЕ атака то юнит смотрит на цель
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01"))
+        {
+            _targetLookAt = target.position;
+        }
 
 
+        //если расстояние между целью и юнитом больше чем радиус атаки и меньше чем максимальное расстояние агрессии и если не воспроизводится анимация атаки ТО двигаем юнита к цели
         if ((Character.transform.position - target.position).magnitude >= attackRange && (Character.transform.position - target.position).magnitude <= maxChaseRange &&
             !(animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.8f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01")))
         {
             Character.Animator.SetBool("IsWalking", true);
             Character.Animator.SetBool("IsAttack", false);
             Character.MoveTo(target.position);
-            
+
 
         }
+        //если расстояние между целью и юнитом больше радиуса преследования или анимация атаки закончилась ТО состояние атаки закончилось
         else if ((Character.transform.position - target.position).magnitude >= maxChaseRange ||
             (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack01")))
         {
@@ -61,7 +71,7 @@ public class AttackState : State
         }
         else
         {
-            _targetLookAt = target.position;
+
             Attack();
         }
     }
