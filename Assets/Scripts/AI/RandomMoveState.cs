@@ -35,11 +35,18 @@ public class RandomMoveState : State
         {
             return;
         }
-        if (Character.CharacterManager._IsDead)
+        if (!Character.CharacterManager._IsAlive)
         {
             IsFinished = true;
             return;
         }
+        if (Character.SearchEnemyInSphere())
+        {
+            IsFinished = true;
+            return;
+        }
+
+
         if ((randomPosition - Character.transform.position).magnitude > completeDistance)
         {
             Character.MoveTo(randomPosition);

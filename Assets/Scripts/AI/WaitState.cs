@@ -22,7 +22,12 @@ public class WaitState : State
         {
             return;
         }
-        if (Character.CharacterManager._IsDead)
+        if (!Character.CharacterManager._IsAlive)
+        {
+            IsFinished = true;
+            return;
+        }
+        if (Character.SearchEnemyInSphere())
         {
             IsFinished = true;
             return;

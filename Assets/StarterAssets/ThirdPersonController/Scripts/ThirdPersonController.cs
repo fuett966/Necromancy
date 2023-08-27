@@ -139,7 +139,7 @@ namespace StarterAssets
 
         private void Start()
         {
-            _mainCamera.GetComponent<CiircularMenu>().onButtonPressed += UseOptionsMenu;
+            //_mainCamera.GetComponent<CiircularMenu>().onButtonPressed += UseOptionsMenu;
 
 
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
@@ -167,7 +167,7 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
-            OnPointToMove();
+            //OnPointToMove();
         }
 
         private void LateUpdate()
@@ -405,66 +405,66 @@ namespace StarterAssets
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
         }
-        private void OnPointToMove()
-        {
-            if (_input.point && _pointTimeoutDelta <= 0.0f)
-            {
-                if (!_mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.activeSelf)
-                {
-                     
-                    EnableOptionsMenu();
-
-                }
-                else
-                {
-                    DisableOptionsMenu();
-                }
-
-                _input.point = false;
-                _pointTimeoutDelta = PointTimeout;
-            }
-
-            if (_pointTimeoutDelta >= 0.0f)
-            {
-                _pointTimeoutDelta -= Time.deltaTime;
-            }
-        }
-        void UseOptionsMenu()
-        {
-            if (_mainCamera.GetComponent<CiircularMenu>().currentMenuItem == 0)
-            {
-                DisableOptionsMenu();
-                GetComponent<AIPlayerController>().ChangeTarget();
-            }
-
-            if (_mainCamera.GetComponent<CiircularMenu>().currentMenuItem == 1)
-            {
-                DisableOptionsMenu();
-                Debug.Log("Возрождение!");
-                GetComponent<NercomancyScript>().SubdueTheCorpse();
-            }
-            
-        }
-        private void EnableOptionsMenu()
-        {
-
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            GetComponent<StarterAssetsInputs>().cursorLocked = false;
-            GetComponent<StarterAssetsInputs>().cursorInputForLook = false;
-
-            _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(true);
-            
-            
-        }
-        private void DisableOptionsMenu()
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(false);
-            GetComponent<StarterAssetsInputs>().cursorLocked = true;
-            GetComponent<StarterAssetsInputs>().cursorInputForLook = true;
-        }
+        //private void OnPointToMove()
+        //{
+        //    if (_input.point && _pointTimeoutDelta <= 0.0f)
+        //    {
+        //        if (!_mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.activeSelf)
+        //        {
+        //             
+        //            EnableOptionsMenu();
+        //
+        //        }
+        //        else
+        //        {
+        //            DisableOptionsMenu();
+        //        }
+        //
+        //        _input.point = false;
+        //        _pointTimeoutDelta = PointTimeout;
+        //    }
+        //
+        //    if (_pointTimeoutDelta >= 0.0f)
+        //    {
+        //        _pointTimeoutDelta -= Time.deltaTime;
+        //    }
+        //}
+        //void UseOptionsMenu()
+        //{
+        //    if (_mainCamera.GetComponent<CiircularMenu>().currentMenuItem == 0)
+        //    {
+        //        DisableOptionsMenu();
+        //        GetComponent<AIPlayerController>().ChangeTarget();
+        //    }
+        //
+        //    if (_mainCamera.GetComponent<CiircularMenu>().currentMenuItem == 1)
+        //    {
+        //        DisableOptionsMenu();
+        //        Debug.Log("Возрождение!");
+        //        GetComponent<NercomancyScript>().SubdueTheCorpse();
+        //    }
+        //    
+        //}
+        //private void EnableOptionsMenu()
+        //{
+        //
+        //    Cursor.lockState = CursorLockMode.None;
+        //    Cursor.visible = true;
+        //
+        //    GetComponent<StarterAssetsInputs>().cursorLocked = false;
+        //    GetComponent<StarterAssetsInputs>().cursorInputForLook = false;
+        //
+        //    _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(true);
+        //    
+        //    
+        //}
+        //private void DisableOptionsMenu()
+        //{
+        //    Cursor.visible = false;
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    _mainCamera.GetComponent<CiircularMenu>().menuCanvas.gameObject.SetActive(false);
+        //    GetComponent<StarterAssetsInputs>().cursorLocked = true;
+        //    GetComponent<StarterAssetsInputs>().cursorInputForLook = true;
+        //}
     }
 }

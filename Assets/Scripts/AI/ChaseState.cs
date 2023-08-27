@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 [CreateAssetMenu(fileName = "New Chase State", menuName = "States/ChaseState")]
 public class ChaseState : State
 {
-    [SerializeField]private Transform target;
+    [SerializeField] private Transform target;
     [SerializeField] private float distance = 2f;
     public float Distance => distance;
 
@@ -14,25 +12,25 @@ public class ChaseState : State
     public override void Init()
     {
         target = Character.Target;
-        if (!Character.Animator.GetBool("IsWalking"))
-        {
-            Character.Animator.SetBool("IsWalking", true);
-        }
+        Character.Animator.SetBool("IsWalking", true);
+
     }
 
     public override void Run()
     {
         if (IsFinished)
         {
-            Exit();
             return;
         }
-        if (Character.CharacterManager._IsDead)
+
+        if (!Character.CharacterManager._IsAlive || Character.SearchEnemyInSphere())
         {
             IsFinished = true;
             return;
         }
-        if ((Character.transform.position - target.position).magnitude >= Distance && (Character.transform.position - target.position).magnitude <= MaxDistance)
+
+
+        if ((Character.transform.position - target.position).magnitude >= MaxDistance)
         {
             Character.MoveTo(target.position);
         }
@@ -42,11 +40,8 @@ public class ChaseState : State
         }
 
     }
-    public override void Exit() 
+    public override void Exit()
     {
-        if(Character.Animator.GetBool("IsWalking"))
-        {
-            Character.Animator.SetBool("IsWalking", false);
-        }
+        Character.Animator.SetBool("IsWalking", false);
     }
 }

@@ -1,53 +1,11 @@
-﻿using Cinemachine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Character : MonoBehaviour
 {
-    [Header("Automatic flags")]
-
-
-    [SerializeField] private bool _autoChasePlayer;
-    public bool _AutoChasePlayer
-    {
-        get { return _autoChasePlayer; }
-        set
-        {
-            if (_isPatrolingPoint == value)
-            {
-                _isPatrolingPoint = !value;
-            }
-            _autoChasePlayer = value;
-        }
-    }
-
-    [SerializeField] private bool _isAgressive;
-    public bool _IsAgressive
-    {
-        get { return _isAgressive; }
-        set { _isAgressive = value; }
-    }
-    [SerializeField] private bool _isPatrolingPoint;
-    public bool _IsPatrolingPoint
-    {
-        get { return _isPatrolingPoint; }
-        set
-        {
-            if (_autoChasePlayer == value)
-            {
-                _autoChasePlayer = !value;
-            }
-            _isPatrolingPoint = value;
-        }
-    }
-
-    [Header("Initial Parameters")]
-
-
-
-    [Header("Initial States")]
+    #region States
 
     [SerializeField] private State startState;
     public State StartState => startState;
@@ -63,10 +21,14 @@ public class Character : MonoBehaviour
     [SerializeField] private DeathState deathState;
     public DeathState DeathState => deathState;
 
-    [Header("Actual state")]
     [SerializeField] public State CurrentState;
+    #endregion States
 
-    [Header("Temp Parameters")]
+    [SerializeField] private float minimumDetectionAngle = -45f;
+    public float MinimumDetectionAngle => minimumDetectionAngle;
+
+    [SerializeField] private float maximumDetectionAngle = 45f;
+    public float MaximumDetectionAngle => maximumDetectionAngle;
 
     [SerializeField] private GameObject playerGM;
     public GameObject PlayerGM => playerGM;
@@ -98,10 +60,6 @@ public class Character : MonoBehaviour
         navMeshPath = new NavMeshPath();
         characterManager = GetComponent<CharacterManager>();
 
-        if(_isPatrolingPoint)
-        {
-            randomMoveTarget = transform;
-        }
         // target = transform;
     }
 
@@ -112,6 +70,7 @@ public class Character : MonoBehaviour
 
     void Update()
     {
+
         if (!CurrentState.IsFinished)
         {
             CurrentState.Run();
@@ -141,26 +100,20 @@ public class Character : MonoBehaviour
     }
     public void ChoiceState()
     {
-        if (characterManager._IsDead)
+        if (!characterManager._IsAlive)
         {
             SetState(DeathState);
             return;
         }
 
-        if (_isAgressive && SearchEnemyInSphere())
+        if (SearchEnemyInSphere())
         {
-            SearchClosetTarger();
+            SearchClosetTarget();
 
-            if (attackState.AttackRange <= (transform.position - target.position).magnitude)
-            {
-                SetState(ChaseState);
-            }
-            else
-            {
-                SetState(AttackState);
-            }
+            SetState(AttackState);
+
         }
-        else if (_autoChasePlayer && tag == "Minion")
+        else if (tag == "Minion")
         {
             if (Vector3.Distance(transform.position, playerGM.transform.position) > ChaseState.MaxDistance)
             {
@@ -180,7 +133,89 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void SearchClosetTarger()
+
+
+    public bool SearchEnemyInSphere()
+    {
+        if (enemyColliders.Count != 0)
+        {
+            enemyColliders.Clear();
+        }
+
+        List<Collider> allColliders = Physics.OverlapSphere(transform.position, AttackState.DetectionRadius, AttackState.DetectionLayer).ToList();
+
+
+        foreach (var collider in allColliders)
+        {
+            for (int i = 0; i < characterManager.EnemyTags.Length; i++)
+            {
+                if (collider.gameObject.tag == characterManager.EnemyTags[i] && collider != gameObject.GetComponent<Collider>())
+                {
+                    EntityManager entityManager = collider.transform.GetComponent<EntityManager>();
+                    if (entityManager != null)
+                    {
+                        // CHECK FOR TEAM ID
+                        Vector3 targetDirection = entityManager.transform.position - transform.position;
+                        float viewableAngle = Vector3.Angle(targetDirection, transform.forward);
+                        if (viewableAngle > minimumDetectionAngle && viewableAngle < maximumDetectionAngle)
+                        {
+                            enemyColliders.Add(collider);
+                            //target = entityManager.transform;
+                        }
+                    }
+                }
+            }
+        }
+
+        allColliders.Clear();
+
+        if (enemyColliders.Count == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
+    }
+
+    public bool HandleDetection()
+    {
+        if (enemyColliders.Count != 0)
+        {
+            enemyColliders.Clear();
+        }
+
+        List<Collider> allColliders = Physics.OverlapSphere(transform.position, AttackState.DetectionRadius, AttackState.DetectionLayer).ToList();
+
+
+        foreach (var collider in allColliders)
+        {
+            for (int i = 0; i < characterManager.EnemyTags.Length; i++)
+            {
+                if (collider.gameObject.tag == characterManager.EnemyTags[i] && collider != gameObject.GetComponent<Collider>())
+                {
+                    enemyColliders.Add(collider);
+                }
+            }
+        }
+
+        allColliders.Clear();
+        SearchClosetTarget();
+
+        if (enemyColliders.Count == 0)
+        {
+            return false;
+        }
+        else
+        {
+            CurrentState.Exit();
+            SetState(AttackState);
+            return true;
+        }
+    }
+    public void SearchClosetTarget()
     {
         Collider closestTarget = null;
         foreach (var collider in enemyColliders)
@@ -198,48 +233,5 @@ public class Character : MonoBehaviour
             }
         }
         target = closestTarget.transform;
-    }
-
-    public bool SearchEnemyInSphere()
-    {
-        if (enemyColliders.Count != 0)
-        {
-            enemyColliders.Clear();
-        }
-
-        List<Collider> allColliders = Physics.OverlapSphere(transform.position, AttackState.MaxChaseRange).ToList();
-
-        foreach (var collider in allColliders)
-        {
-            for (int i = 0; i < characterManager.EnemyTags.Length; i++)
-            {
-                if (collider.gameObject.tag == characterManager.EnemyTags[i] && collider != gameObject.GetComponent<Collider>())
-                {
-
-                    enemyColliders.Add(collider);
-                }
-            }
-        }
-
-        allColliders.Clear();
-
-        if (enemyColliders.Count == 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-
-    }
-    public void ChangeTarget(Transform newTarget)
-    {
-        if (characterManager._IsDead)
-        {
-            return;
-        }
-        target = newTarget;
-        SetState(chaseState);
     }
 }

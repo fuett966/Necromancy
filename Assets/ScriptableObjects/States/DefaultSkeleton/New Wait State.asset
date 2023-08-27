@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: New Wait State
   m_EditorClassIdentifier: 
   Character: {fileID: 0}
-  waitingTime: 4
+  waitingTime: 20

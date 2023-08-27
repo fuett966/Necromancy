@@ -49,7 +49,7 @@ public class EnergyRefillState : State
         {
             return;
         }
-        if (Character.CharacterManager._IsDead)
+        if (!Character.CharacterManager._IsAlive)
         {
             IsFinished = true;
             return;

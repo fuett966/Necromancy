@@ -30,7 +30,7 @@ public class EatState : State
             IsFinished = true;
             Character.SetState(NoFoodState);
         }
-        if (Character.CharacterManager._IsDead)
+        if (!Character.CharacterManager._IsAlive)
         {
             IsFinished = true;
             return;

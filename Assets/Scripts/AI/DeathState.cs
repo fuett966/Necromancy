@@ -19,9 +19,10 @@ public class DeathState : State
             Exit();
             return;
         }
-        if (!Character.GetComponent<CharacterManager>()._IsDead)
+        if (!Character.CharacterManager._IsAlive)
         {
             IsFinished = true;
+            return;
         }
     }
     public override void Exit()
